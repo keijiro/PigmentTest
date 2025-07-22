@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Pigment {
-
 [ExecuteInEditMode]
-public sealed partial class PigmentController : MonoBehaviour
+public sealed partial class PChannelController : MonoBehaviour
 {
     #region Public properties
 
@@ -46,5 +44,3 @@ public sealed partial class PigmentController : MonoBehaviour
 
     #endregion
 }
-
-} // namespace Pigment

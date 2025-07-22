@@ -4,18 +4,16 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-namespace Pigment {
-
-sealed class PigmentPass : ScriptableRenderPass
+sealed class PChannelPass : ScriptableRenderPass
 {
-    class PassData { public PigmentController Controller { get; set; } }
+    class PassData { public PChannelController Controller { get; set; } }
 
     public override void RecordRenderGraph(RenderGraph graph,
                                            ContextContainer context)
     {
-        // PigmentController component reference
+        // PChannelController component reference
         var camera = context.Get<UniversalCameraData>().camera;
-        var ctrl = camera.GetComponent<PigmentController>();
+        var ctrl = camera.GetComponent<PChannelController>();
         if (ctrl == null || !ctrl.enabled) return;
 
         // Not supported: Back buffer source
@@ -25,7 +23,7 @@ sealed class PigmentPass : ScriptableRenderPass
         // Destination texture allocation
         var source = resource.activeColorTexture;
         var desc = graph.GetTextureDesc(source);
-        desc.name = "Pigment";
+        desc.name = "PChannel";
         desc.clearBuffer = false;
         desc.depthBufferBits = 0;
         var dest = graph.CreateTexture(desc);
@@ -33,24 +31,22 @@ sealed class PigmentPass : ScriptableRenderPass
         // Blit
         var param = new RenderGraphUtils.
           BlitMaterialParameters(source, dest, ctrl.Material, 0);
-        graph.AddBlitPass(param, passName: "Pigment");
+        graph.AddBlitPass(param, passName: "PChannel");
 
         // Destination texture as the camera texture
         resource.cameraColor = dest;
     }
 }
 
-public sealed class PigmentFeature : ScriptableRendererFeature
+public sealed class PChannelFeature : ScriptableRendererFeature
 {
-    PigmentPass _pass;
+    PChannelPass _pass;
 
     public override void Create()
-      => _pass = new PigmentPass
+      => _pass = new PChannelPass
            { renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing };
 
     public override void AddRenderPasses(ScriptableRenderer renderer,
                                          ref RenderingData data)
       => renderer.EnqueuePass(_pass);
 }
-
-} // namespace Pigment

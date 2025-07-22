@@ -1,4 +1,4 @@
-Shader "Hidden/Pigment"
+Shader "Hidden/PChannel"
 {
 HLSLINCLUDE
 
@@ -12,13 +12,11 @@ SAMPLER(sampler_MixboxLUT);
 
 float4 Fragment(float4 position : SV_Position) : SV_Target0
 {
-    MixboxLatent z1 = MixboxRGBToLatent(float3(1.000, 0.153, 0.008));
-    MixboxLatent z2 = MixboxRGBToLatent(float3(0.000, 0.235, 0.196));
+    MixboxLatent z1 = MixboxRGBToLatent(float3(0.988, 0.827, 0.000));
+    MixboxLatent z2 = MixboxRGBToLatent(float3(0.027, 0.427, 0.086));
     MixboxLatent z3 = MixboxRGBToLatent(float3(0.000, 0.129, 0.522));
 
-    float3 i = LOAD_TEXTURE2D(_BlitTexture, position.xy).rgb;
-    //i = LinearToSRGB(i);
-    i *= 3;
+    float3 i = saturate(LOAD_TEXTURE2D(_BlitTexture, position.xy).rgb);
 
     MixboxLatent z = (z1 * i.r + z2 * i.g + z3 * i.b) / (i.r + i.g + i.b + 0.01);
 
