@@ -8,7 +8,7 @@ HLSLINCLUDE
 TEXTURE2D(_MixboxLUT);
 SAMPLER(sampler_MixboxLUT);
 
-#include "../Mixbox/ShaderLibrary/Mixbox.hlsl"
+#include "Packages/com.scrtwpns.mixbox/ShaderLibrary/Mixbox.hlsl"
 
 float4 Fragment(float4 position : SV_Position) : SV_Target0
 {

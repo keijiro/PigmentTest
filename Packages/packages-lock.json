@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.scrtwpns.mixbox": {
+      "version": "https://github.com/scrtwpns/mixbox.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "5a85bac45c012876bbcd984ce062abd3f4e44b51"
+    },
     "com.unity.burst": {
       "version": "1.8.23",
       "depth": 2,
