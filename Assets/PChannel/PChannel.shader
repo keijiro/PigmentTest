@@ -13,7 +13,7 @@ SAMPLER(sampler_MixboxLUT);
 float4 Fragment(float4 position : SV_Position) : SV_Target0
 {
     MixboxLatent z1 = MixboxRGBToLatent(float3(0.988, 0.827, 0.000));
-    MixboxLatent z2 = MixboxRGBToLatent(float3(0.027, 0.427, 0.086));
+    MixboxLatent z2 = MixboxRGBToLatent(float3(1.000, 0.412, 0.000));
     MixboxLatent z3 = MixboxRGBToLatent(float3(0.000, 0.129, 0.522));
 
     float3 i = saturate(LOAD_TEXTURE2D(_BlitTexture, position.xy).rgb);
