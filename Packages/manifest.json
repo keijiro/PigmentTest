@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "com.scrtwpns.mixbox": "https://github.com/scrtwpns/mixbox.git#upm",
+    "com.unity.recorder": "5.1.2",
     "com.unity.render-pipelines.universal": "17.0.4",
     "jp.keijiro.klutter-tools": "2.1.0",
-    "jp.keijiro.vfxgraphassets": "3.9.1",
-    "com.scrtwpns.mixbox": "https://github.com/scrtwpns/mixbox.git#upm"
+    "jp.keijiro.spectral-js-unity": "1.0.0",
+    "jp.keijiro.vfxgraphassets": "3.9.1"
   },
   "scopedRegistries": [
     {
