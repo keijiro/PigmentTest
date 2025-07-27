@@ -6,6 +6,11 @@ public sealed partial class PChannelController : MonoBehaviour
 {
     #region Public properties
 
+    public enum MixMethod { Mixbox, SpectralJS }
+
+    [field:SerializeField]
+    public MixMethod Method { get; set; } = MixMethod.Mixbox;
+
     [field:SerializeField, HideInInspector]
     public Shader Shader { get; set; }
 
@@ -31,6 +36,8 @@ public sealed partial class PChannelController : MonoBehaviour
     #region Controller implementation
 
     Material _material;
+
+    public int PassIndex => (int)Method;
 
     public Material UpdateMaterial()
     {

@@ -128,9 +128,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1411473419}
+  - component: {fileID: 1411473420}
   - component: {fileID: 1411473418}
   - component: {fileID: 1411473416}
-  - component: {fileID: 1411473420}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -260,6 +260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd8d6ec5dabeb46e782fc68afd10cfab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Method>k__BackingField: 0
   <Shader>k__BackingField: {fileID: 4800000, guid: 0919ec6ab34b6499dbdfffb955528060, type: 3}
   <Lut>k__BackingField: {fileID: 2800000, guid: 9bb177930f1b0624ebcd9bdad8029652, type: 3}
 --- !u!1 &2126377188
