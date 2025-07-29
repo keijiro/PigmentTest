@@ -1,45 +1,56 @@
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
 public sealed partial class PFeedbackController : MonoBehaviour
 {
-    #region Public properties
+    #region Public members exposed for render passes
 
-    [field:SerializeField, HideInInspector]
-    public Shader Shader { get; set; }
+    public bool IsReady => Properties != null;
 
-    [field:SerializeField, HideInInspector]
-    public Texture2D Lut { get; set; }
+    public MaterialPropertyBlock Properties { get; private set; }
 
-    public Material Material => UpdateMaterial();
+    public void PrepareBuffer(int width, int height, GraphicsFormat format)
+    {
+        RTHandle Allocator(RTHandleSystem rts, int index, GraphicsFormat format)
+          => rts.Alloc(Vector3.one, format, name: "PFeedback Buffer");
+
+        if (_buffers == null)
+        {
+            _buffers = new BufferedRTHandleSystem();
+            _buffers.AllocBuffer(0, (rts, i) => Allocator(rts, i, format), 1);
+        }
+
+        _buffers.SwapAndSetReferenceSize(width, height);
+    }
+
+    public RTHandle PreviousTexture => _buffers.GetFrameRT(0, 0);
+    public RTHandle TargetTexture => _buffers.GetFrameRT(0, 0);
+
+    #endregion
+
+    #region Private members
+
+    BufferedRTHandleSystem _buffers;
 
     #endregion
 
     #region MonoBehaviour implementation
 
-    void OnDestroy()
-      => CoreUtils.Destroy(_material);
-
     void OnDisable()
       => OnDestroy();
 
-    void Update() {} // Just for providing the component enable switch.
-
-    #endregion
-
-    #region Controller implementation
-
-    Material _material;
-
-    public Material UpdateMaterial()
+    void OnDestroy()
     {
-        if (_material == null)
-            _material = CoreUtils.CreateEngineMaterial(Shader);
+        _buffers?.Dispose();
+        _buffers = null;
+    }
 
-        _material.SetTexture("_MixboxLUT", Lut);
-
-        return _material;
+    void LateUpdate()
+    {
+        if (Properties == null) Properties = new MaterialPropertyBlock();
+        if (_buffers != null) Properties.SetTexture("_HistoryTex", TargetTexture);
     }
 
     #endregion

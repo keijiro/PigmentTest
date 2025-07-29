@@ -39,7 +39,8 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
   - {fileID: -2694173106508434473}
-  m_RendererFeatureMap: d773277fd55f9cda
+  - {fileID: 378636013807861597}
+  m_RendererFeatureMap: d773277fd55f9cda5dff2fce722f4105
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 2
@@ -64,3 +65,17 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &378636013807861597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04e2f370eb360443badc3c25b7560f1a, type: 3}
+  m_Name: PFeedbackFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  _shader: {fileID: 4800000, guid: 4de96cb8650d44618a16e2765a57b00a, type: 3}
