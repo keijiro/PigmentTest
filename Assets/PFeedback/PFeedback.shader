@@ -10,15 +10,14 @@ Texture2D _HistoryTex;
 
 float4 Frag(float4 position : SV_Position) : SV_Target0
 {
-    float3 hist = saturate(LOAD_TEXTURE2D(_HistoryTex, position.xy).rgb);
-    float3 draw = saturate(LOAD_TEXTURE2D(_BlitTexture, position.xy).rgb);
+    float4 c0 = saturate(LOAD_TEXTURE2D(_HistoryTex, position.xy));
+    float4 c1 = saturate(LOAD_TEXTURE2D(_BlitTexture, position.xy));
 
-    float hist_pow = saturate(dot(hist, 10));
-    float draw_pow = saturate(dot(draw, 10));
+    c1.rgb /= LinearToSRGB(c1.a);
 
-    float3 c = SpectralMix(hist, hist_pow * 3, draw, draw_pow, (float3)1, 0.1);
+    float3 c = SpectralMix(c0.rgb, c0.a, c1.rgb, c1.a);
 
-    return float4(c, 1);
+    return float4(c, max(c0.a, c1.a));
 }
 
 ENDHLSL
