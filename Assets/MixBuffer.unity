@@ -131,7 +131,7 @@ GameObject:
   - component: {fileID: 111687982}
   - component: {fileID: 111687981}
   m_Layer: 5
-  m_Name: Render
+  m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -625,6 +625,6 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 798761739}
   - {fileID: 1411473419}
   - {fileID: 2126377191}
-  - {fileID: 798761739}

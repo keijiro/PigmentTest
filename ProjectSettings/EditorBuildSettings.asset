@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/PChannel.unity
-    guid: ff5702dfe30c34fa2a680f20ba104712
+    path: Assets/MixBuffer.unity
+    guid: 4a0ea9481829d402abb0c1e71584b707
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

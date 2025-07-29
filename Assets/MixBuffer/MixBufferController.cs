@@ -3,7 +3,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
 [ExecuteInEditMode]
-public sealed partial class PFeedbackController : MonoBehaviour
+public sealed partial class MixBufferController : MonoBehaviour
 {
     #region Public members exposed for render passes
 
@@ -11,10 +11,12 @@ public sealed partial class PFeedbackController : MonoBehaviour
 
     public MaterialPropertyBlock Properties { get; private set; }
 
+    public RTHandle BufferTexture => _buffers.GetFrameRT(0, 0);
+
     public void PrepareBuffer(int width, int height, GraphicsFormat format)
     {
         RTHandle Allocator(RTHandleSystem rts, int index, GraphicsFormat format)
-          => rts.Alloc(Vector3.one, format, name: "PFeedback Buffer");
+          => rts.Alloc(Vector3.one, format, name: "MixBuffer Buffer");
 
         if (_buffers == null)
         {
@@ -24,9 +26,6 @@ public sealed partial class PFeedbackController : MonoBehaviour
 
         _buffers.SwapAndSetReferenceSize(width, height);
     }
-
-    public RTHandle PreviousTexture => _buffers.GetFrameRT(0, 0);
-    public RTHandle TargetTexture => _buffers.GetFrameRT(0, 0);
 
     #endregion
 
@@ -50,7 +49,7 @@ public sealed partial class PFeedbackController : MonoBehaviour
     void LateUpdate()
     {
         if (Properties == null) Properties = new MaterialPropertyBlock();
-        if (_buffers != null) Properties.SetTexture("_HistoryTex", TargetTexture);
+        if (_buffers != null) Properties.SetTexture("_BufferTex", BufferTexture);
     }
 
     #endregion

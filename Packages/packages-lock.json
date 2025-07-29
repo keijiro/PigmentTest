@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.scrtwpns.mixbox": {
-      "version": "https://github.com/scrtwpns/mixbox.git#upm",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "5a85bac45c012876bbcd984ce062abd3f4e44b51"
-    },
     "com.unity.bindings.openimageio": {
       "version": "1.0.0",
       "depth": 1,
@@ -179,7 +172,7 @@
       }
     },
     "jp.keijiro.klutter-tools": {
-      "version": "2.1.0",
+      "version": "2.3.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
