@@ -402,7 +402,7 @@ MonoBehaviour:
   <SourceTexture>k__BackingField: {fileID: 0}
   _sourceVideo: {fileID: 0}
   <SourceCamera>k__BackingField: {fileID: 0}
-  _sourceUrl: file:Test.mp4
+  _sourceUrl: file://Test.mp4
   _sourceName: 
   _deviceResolution: {x: 0, y: 0}
   _deviceFrameRate: 0
@@ -433,6 +433,7 @@ GameObject:
   - component: {fileID: 1411473418}
   - component: {fileID: 1411473416}
   - component: {fileID: 1411473420}
+  - component: {fileID: 1411473421}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -562,6 +563,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd726a8713c7740ce8fa911c033d7e65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1411473421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1411473415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6752477c1f1f4c71a0f0e4fe14e6574, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Interval>k__BackingField: 0.24
+  <BrushColor>k__BackingField: {r: 0.122641504, g: 0.0989231, b: 0.12089751, a: 1}
+  _source: {fileID: 858097496}
 --- !u!1 &2126377188
 GameObject:
   m_ObjectHideFlags: 0
