@@ -4,9 +4,9 @@ using Klak.TestTools;
 public sealed class InjectorController : MonoBehaviour
 {
     [field:SerializeField] public float Interval { get; set; } = 1;
-    [field:SerializeField] public Color BrushColor { get; set; } = Color.white;
 
     [SerializeField] ImageSource _source = null;
+    [SerializeField] Color[] _palette = null;
 
     public bool IsReady { get; private set; }
 
@@ -18,7 +18,9 @@ public sealed class InjectorController : MonoBehaviour
 
         while (true)
         {
-            Properties.SetColor("_BrushColor", BrushColor);
+            Properties.SetColor("_Color1", _palette[0]);
+            Properties.SetColor("_Color2", _palette[1]);
+            Properties.SetColor("_Color3", _palette[2]);
             Properties.SetTexture("_MainTex", _source.AsTexture);
             IsReady = true;
             await Awaitable.NextFrameAsync();
