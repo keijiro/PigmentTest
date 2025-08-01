@@ -1,0 +1,4 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Rendering/Render.renderTexture?fileID=8400000&amp;guid=35ad6d68dc2414c82b471b0238bf18b3&amp;type=2#Render&quot;); -unity-background-scale-mode: scale-to-fit;" />
+    <ui:VisualElement style="position: absolute; right: 40px; bottom: 40px; width: 120px; height: 72px; background-image: url(&quot;project://database/Assets/Rendering/Video.renderTexture?fileID=8400000&amp;guid=37803c379327143aa8406be400659a40&amp;type=2#Video&quot;); -unity-background-image-tint-color: rgba(255, 255, 255, 0.6);" />
+</ui:UXML>
