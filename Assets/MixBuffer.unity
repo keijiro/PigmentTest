@@ -490,6 +490,7 @@ GameObject:
   m_Component:
   - component: {fileID: 858097497}
   - component: {fileID: 858097496}
+  - component: {fileID: 858097498}
   m_Layer: 0
   m_Name: Video Input
   m_TagString: Untagged
@@ -512,7 +513,7 @@ MonoBehaviour:
   _generatorShader: {fileID: 4800000, guid: 3f7d8db4748f54c638a46cec0b0e61f8, type: 3}
   _sourceType: 8
   _outputResolution: {x: 1920, y: 1080}
-  _outputDestination: {fileID: 8400000, guid: 37803c379327143aa8406be400659a40, type: 2}
+  _outputDestination: {fileID: 0}
   <SourceTexture>k__BackingField: {fileID: 0}
   _sourceVideo: {fileID: 0}
   <SourceCamera>k__BackingField: {fileID: 0}
@@ -535,6 +536,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &858097498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 858097495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d089d6f21d1c54409a202d3543abd030, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Interval>k__BackingField: 2
+  _source: {fileID: 858097496}
+  _destination: {fileID: 8400000, guid: 37803c379327143aa8406be400659a40, type: 2}
 --- !u!1 &1411473415
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,7 +563,6 @@ GameObject:
   - component: {fileID: 1411473418}
   - component: {fileID: 1411473416}
   - component: {fileID: 1411473420}
-  - component: {fileID: 1411473421}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -677,24 +692,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd726a8713c7740ce8fa911c033d7e65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1411473421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1411473415}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6752477c1f1f4c71a0f0e4fe14e6574, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Interval>k__BackingField: 0.06666667
-  _source: {fileID: 858097496}
-  _palette:
-  - {r: 0.8301887, g: 0, b: 0, a: 1}
-  - {r: 0, g: 0.12039329, b: 0.8207547, a: 1}
-  - {r: 1, g: 0.5865263, b: 0, a: 1}
 --- !u!1 &2126377188
 GameObject:
   m_ObjectHideFlags: 0
