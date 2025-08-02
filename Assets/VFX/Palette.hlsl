@@ -16,7 +16,7 @@ float3 PickNearestColor(float3 input, VFXGradient palette, uint seed)
     for (int i = 0; i < 6; i++)
     {
         float x = GenerateHashedRandomFloat(uint2(seed, i));
-        float3 c = LinearToSRGB(SampleGradient(palette, x));
+        float3 c = LinearToSRGB(SampleGradient(palette, x).rgb);
         float d = distance(c0, c);
         if (d < d_min)
         {
