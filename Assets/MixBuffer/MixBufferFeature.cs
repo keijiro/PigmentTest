@@ -9,7 +9,7 @@ using UnityEngine.Rendering.Universal;
 public sealed class MixBufferContextItem : ContextItem, System.IDisposable
 {
     // Canvas RT: Persistent RTHandle used for frame accumulation
-    RTHandle _canvasRT;
+    (RTHandle rt1, RTHandle rt2, bool swap) _canvas;
 
     // Custom data for the composite pass
     class PassData
@@ -19,15 +19,19 @@ public sealed class MixBufferContextItem : ContextItem, System.IDisposable
         public Material material;
     }
 
+    // Empty implementation of abstract Reset()
     public override void Reset() {}
 
+    // Pass building
     public void RecordPasses
       (RenderGraph renderGraph,
        ContextContainer frameData,
        Material material)
     {
-        // MixBufferController reference
         var camera = frameData.Get<UniversalCameraData>();
+        var resource = frameData.Get<UniversalResourceData>();
+
+        // MixBufferController reference
         var ctrl = camera.camera.GetComponent<MixBufferController>();
         if (ctrl == null || !ctrl.enabled || !ctrl.IsReady) return;
 
@@ -38,26 +42,24 @@ public sealed class MixBufferContextItem : ContextItem, System.IDisposable
         rtDesc.depthStencilFormat = GraphicsFormat.None;
 
         RenderingUtils.ReAllocateHandleIfNeeded
-          (ref _canvasRT, rtDesc,
-           wrapMode: TextureWrapMode.Clamp, name: "MixBuffer Canvas");
+          (ref _canvas.rt1, rtDesc,
+           wrapMode: TextureWrapMode.Clamp, name: "MixBuffer Canvas 1");
 
-        var canvas = renderGraph.ImportTexture(_canvasRT);
+        RenderingUtils.ReAllocateHandleIfNeeded
+          (ref _canvas.rt2, rtDesc,
+           wrapMode: TextureWrapMode.Clamp, name: "MixBuffer Canvas 2");
 
-        // Source (camera target texture)
-        var resource = frameData.Get<UniversalResourceData>();
-        var source = resource.activeColorTexture;
-
-        // Destination texture allocation
-        var desc = renderGraph.GetTextureDesc(source);
-        desc.name = "MixBuffer Dest";
-        desc.clearBuffer = false;
-        var dest = renderGraph.CreateTexture(desc);
+        // RT selection and swapping logic
+        var canvas = renderGraph.ImportTexture(_canvas.rt1);
+        var dest = renderGraph.ImportTexture(_canvas.rt2);
+        if (_canvas.swap) (canvas, dest) = (dest, canvas);
+        _canvas.swap = !_canvas.swap;
 
         // Composite pass setup: source + canvas -> dest
         using (var builder = renderGraph.AddRasterRenderPass<PassData>
           ("MixBuffer Composite", out var passData))
         {
-            passData.source = source;
+            passData.source = resource.activeColorTexture;
             passData.canvas = canvas;
             passData.material = material;
 
@@ -69,24 +71,27 @@ public sealed class MixBufferContextItem : ContextItem, System.IDisposable
               ((PassData data, RasterGraphContext ctx) => ExecutePass(data, ctx));
         }
 
-        // Copy pass: dest -> canvas
-        renderGraph.AddCopyPass(dest, canvas, passName: "MixBuffer Copy Canvas");
-
         // Use the destination texture as the new camera color.
         resource.cameraColor = dest;
     }
 
+    // Render pass execution
     static void ExecutePass(PassData data, RasterGraphContext context)
     {
-        data.material.SetTexture("_BufferTex", data.canvas);
         data.material.SetTexture("_BlitTexture", data.source);
+        data.material.SetTexture("_BufferTex", data.canvas);
         CoreUtils.DrawFullScreen(context.cmd, data.material);
     }
 
+    // IDisposable implementation
     public void Dispose()
-      => _canvasRT?.Release();
+    {
+        _canvas.rt1?.Release();
+        _canvas.rt2?.Release();
+    }
 }
 
+// Render pass class: Simple wrapper for the context item class
 sealed class MixBufferPass : ScriptableRenderPass
 {
     Material _material;
@@ -96,12 +101,11 @@ sealed class MixBufferPass : ScriptableRenderPass
 
     public override void RecordRenderGraph
       (RenderGraph renderGraph, ContextContainer frameData)
-    {
-        var contextItem = frameData.GetOrCreate<MixBufferContextItem>();
-        contextItem.RecordPasses(renderGraph, frameData, _material);
-    }
+      => frameData.GetOrCreate<MixBufferContextItem>().
+           RecordPasses(renderGraph, frameData, _material);
 }
 
+// Renderer feature class
 public sealed class MixBufferFeature : ScriptableRendererFeature
 {
     [SerializeField, HideInInspector] Shader _shader = null;
