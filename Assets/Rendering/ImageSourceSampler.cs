@@ -10,6 +10,8 @@ public sealed class ImageSourceSampler : MonoBehaviour
 
     async void Start()
     {
+        await Awaitable.WaitForSecondsAsync(0.5f);
+
         while (true)
         {
             Graphics.Blit(_source.AsTexture, _destination);
