@@ -1,8 +1,91 @@
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
+
+// Context item class stored in the frameData
+public sealed class MixBufferContextItem : ContextItem, System.IDisposable
+{
+    // Canvas RT: Persistent RTHandle used for frame accumulation
+    RTHandle _canvasRT;
+
+    // Custom data for the composite pass
+    class PassData
+    {
+        public TextureHandle source;
+        public TextureHandle canvas;
+        public Material material;
+    }
+
+    public override void Reset() {}
+
+    public void RecordPasses
+      (RenderGraph renderGraph,
+       ContextContainer frameData,
+       Material material)
+    {
+        // MixBufferController reference
+        var camera = frameData.Get<UniversalCameraData>();
+        var ctrl = camera.camera.GetComponent<MixBufferController>();
+        if (ctrl == null || !ctrl.enabled || !ctrl.IsReady) return;
+
+        // Canvas RT (re)allocation
+        var rtDesc = camera.cameraTargetDescriptor;
+
+        rtDesc.msaaSamples = 1;
+        rtDesc.depthStencilFormat = GraphicsFormat.None;
+
+        RenderingUtils.ReAllocateHandleIfNeeded
+          (ref _canvasRT, rtDesc,
+           wrapMode: TextureWrapMode.Clamp, name: "MixBuffer Canvas");
+
+        var canvas = renderGraph.ImportTexture(_canvasRT);
+
+        // Source (camera target texture)
+        var resource = frameData.Get<UniversalResourceData>();
+        var source = resource.activeColorTexture;
+
+        // Temporary texture allocation
+        var desc = renderGraph.GetTextureDesc(source);
+        desc.name = "MixBuffer Temp";
+        desc.clearBuffer = false;
+        var temp = renderGraph.CreateTexture(desc);
+
+        // Composite pass setup: source + canvas -> temp
+        using (var builder = renderGraph.AddRasterRenderPass<PassData>
+          ("MixBuffer Composite", out var passData))
+        {
+            passData.source = source;
+            passData.canvas = canvas;
+            passData.material = material;
+
+            builder.UseTexture(passData.source);
+            builder.UseTexture(passData.canvas);
+            builder.SetRenderAttachment(temp, 0);
+
+            builder.SetRenderFunc
+              ((PassData data, RasterGraphContext ctx) => ExecutePass(data, ctx));
+        }
+
+        // Copy pass: temp -> canvas
+        renderGraph.AddCopyPass(temp, canvas, passName: "MixBuffer Copy Canvas");
+
+        // Copy pass: temp -> source
+        renderGraph.AddCopyPass(temp, source, passName: "MixBuffer Copy Dest");
+    }
+
+    static void ExecutePass(PassData data, RasterGraphContext context)
+    {
+        data.material.SetTexture("_BufferTex", data.canvas);
+        data.material.SetTexture("_BlitTexture", data.source);
+        CoreUtils.DrawFullScreen(context.cmd, data.material);
+    }
+
+    public void Dispose()
+      => _canvasRT?.Release();
+}
 
 sealed class MixBufferPass : ScriptableRenderPass
 {
@@ -12,37 +95,10 @@ sealed class MixBufferPass : ScriptableRenderPass
       => _material = material;
 
     public override void RecordRenderGraph
-      (RenderGraph graph, ContextContainer context)
+      (RenderGraph renderGraph, ContextContainer frameData)
     {
-        // Not supported: Back buffer source
-        var resource = context.Get<UniversalResourceData>();
-        if (resource.isActiveTargetBackBuffer) return;
-
-        // MixBufferController component reference
-        var camera = context.Get<UniversalCameraData>().camera;
-        var ctrl = camera.GetComponent<MixBufferController>();
-        if (ctrl == null || !ctrl.enabled || !ctrl.IsReady) return;
-
-        // Source (camera texture)
-        var source = resource.activeColorTexture;
-        var desc = graph.GetTextureDesc(source);
-
-        // Temp destination
-        desc.name = "MixBuffer Temp";
-        desc.clearBuffer = false;
-        var temp = graph.CreateTexture(desc);
-
-        // Buffer preparation
-        ctrl.PrepareBuffer(desc.width, desc.height, desc.format);
-        var buffer = graph.ImportTexture(ctrl.BufferTexture);
-
-        // Blit
-        var param1 = new RenderGraphUtils.BlitMaterialParameters
-          (source, temp, _material, 0, ctrl.Properties);
-        graph.AddBlitPass(param1, passName: "MixBuffer (composite)");
-
-        graph.AddCopyPass(temp, buffer, passName: "MixBuffer (copy buffer)");
-        graph.AddCopyPass(temp, source, passName: "MixBuffer (copy dest)");
+        var contextItem = frameData.GetOrCreate<MixBufferContextItem>();
+        contextItem.RecordPasses(renderGraph, frameData, _material);
     }
 }
 
