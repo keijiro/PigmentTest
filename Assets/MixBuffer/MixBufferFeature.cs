@@ -47,13 +47,13 @@ public sealed class MixBufferContextItem : ContextItem, System.IDisposable
         var resource = frameData.Get<UniversalResourceData>();
         var source = resource.activeColorTexture;
 
-        // Temporary texture allocation
+        // Destination texture allocation
         var desc = renderGraph.GetTextureDesc(source);
-        desc.name = "MixBuffer Temp";
+        desc.name = "MixBuffer Dest";
         desc.clearBuffer = false;
-        var temp = renderGraph.CreateTexture(desc);
+        var dest = renderGraph.CreateTexture(desc);
 
-        // Composite pass setup: source + canvas -> temp
+        // Composite pass setup: source + canvas -> dest
         using (var builder = renderGraph.AddRasterRenderPass<PassData>
           ("MixBuffer Composite", out var passData))
         {
@@ -63,17 +63,17 @@ public sealed class MixBufferContextItem : ContextItem, System.IDisposable
 
             builder.UseTexture(passData.source);
             builder.UseTexture(passData.canvas);
-            builder.SetRenderAttachment(temp, 0);
+            builder.SetRenderAttachment(dest, 0);
 
             builder.SetRenderFunc
               ((PassData data, RasterGraphContext ctx) => ExecutePass(data, ctx));
         }
 
-        // Copy pass: temp -> canvas
-        renderGraph.AddCopyPass(temp, canvas, passName: "MixBuffer Copy Canvas");
+        // Copy pass: dest -> canvas
+        renderGraph.AddCopyPass(dest, canvas, passName: "MixBuffer Copy Canvas");
 
-        // Copy pass: temp -> source
-        renderGraph.AddCopyPass(temp, source, passName: "MixBuffer Copy Dest");
+        // Use the destination texture as the new camera color.
+        resource.cameraColor = dest;
     }
 
     static void ExecutePass(PassData data, RasterGraphContext context)
