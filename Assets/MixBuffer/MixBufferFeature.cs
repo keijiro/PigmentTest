@@ -78,7 +78,7 @@ public sealed class MixBufferContextItem : ContextItem, System.IDisposable
     // Render pass execution
     static void ExecutePass(PassData data, RasterGraphContext context)
     {
-        data.material.SetTexture("_BlitTexture", data.source);
+        data.material.SetTexture("_MainTex", data.source);
         data.material.SetTexture("_BufferTex", data.canvas);
         CoreUtils.DrawFullScreen(context.cmd, data.material);
     }
